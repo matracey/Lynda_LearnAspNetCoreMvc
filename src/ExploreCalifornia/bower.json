@@ -1,0 +1,7 @@
+{
+	"name": "explore-california",
+	"private": true,
+  "dependencies": {
+    "tinymce": ""
+  }
+}
