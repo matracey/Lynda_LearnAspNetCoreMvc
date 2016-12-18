@@ -1,5 +1,11 @@
 ﻿{
+  "ConnectionStrings": {
+    "BlogDataContext": "Server=(localdb)\\ProjectsV13;Database=ExploreCalifornia_Blog;Trusted_Connection=True;",
+    "SpecialsDataContext": "Server=(localdb)\\ProjectsV13;Database=ExploreCalifornia_Specials;Trusted_Connection=True;"
+    //"BlogDataContext": "Server=(localdb)\\mssqllocaldb;Database=ExploreCalifornia;Trusted_Connection=True;"
+  },
   "FeatureToggles": {
     "EnableDeveloperExceptions": "true"
   }
 }
+

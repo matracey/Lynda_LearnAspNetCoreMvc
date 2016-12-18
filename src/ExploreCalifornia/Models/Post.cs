@@ -2,12 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExploreCalifornia.Models
 {
     public class Post
     {
+        public long Id { get; set; }
+
+        private string _key;
+
+        public string Key
+        {
+            get { return _key ?? (_key = Regex.Replace(Title.ToLower(), "[^a-z0-9]", "-")); }
+            set { _key = value; }
+        }
+
         [Display(Name="Post Title")]
         [Required(ErrorMessage = "A title is required."), StringLength(100, MinimumLength = 5, ErrorMessage = "Title must be between 5 and 100 characters long.")]
         [DataType(DataType.Text)]
@@ -15,7 +26,7 @@ namespace ExploreCalifornia.Models
 
         public string Author { get; set; }
 
-        [Required(ErrorMessage = "A post body is required."), MinLength(100, ErrorMessage = "Title must be at least 100 characters long.")]
+        [Required(ErrorMessage = "A post body is required."), MinLength(100, ErrorMessage = "The post body must be at least 100 characters long.")]
         [DataType(DataType.MultilineText)]
         public string Body { get; set; }
 

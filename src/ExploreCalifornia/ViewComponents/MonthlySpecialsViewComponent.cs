@@ -16,6 +16,7 @@ namespace ExploreCalifornia.ViewComponents
         {
             _specials = ctx;
         }
+
         public IViewComponentResult Invoke()
         {
             var specials = _specials.GetMonthlySpecials();
