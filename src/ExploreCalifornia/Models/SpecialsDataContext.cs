@@ -18,7 +18,12 @@ namespace ExploreCalifornia.Models
 
         public IEnumerable<Special> GetMonthlySpecials()
         {
-            return Specials.ToArray();
+            return Specials.OrderByDescending(x => x.Created).Where(x => x.Created.Month == DateTime.Now.Month).ToArray();
+        }
+
+        public IEnumerable<Special> GetSpecials()
+        {
+            return Specials.OrderByDescending(x => x.Created).ToArray();
         }
     }
 }

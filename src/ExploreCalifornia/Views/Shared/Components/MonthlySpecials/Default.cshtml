@@ -1,5 +1,5 @@
 ﻿@model IEnumerable<ExploreCalifornia.Models.Special>
-<h1>Monthly Specials</h1>
+<h1 style="display: inline-block">Monthly Specials</h1><h3 style="float: right; display: inline-block"><small>@Html.ActionLink("Create new", "Create", "Special")</small></h3>
 
 @foreach (var special in Model)
 {
