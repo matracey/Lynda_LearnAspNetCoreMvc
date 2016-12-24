@@ -1,0 +1,22 @@
+﻿@addTagHelper "*, Microsoft.AspNetCore.Mvc.TagHelpers"
+@model ExploreCalifornia.Models.SpecialViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+
+<fieldset>
+    <form asp-action="Delete" asp-controller="Special">
+        <h1>Are you sure you want to delete @(Model.Name)?</h1>
+        <input asp-for="Name" type="hidden" />
+        <input asp-for="Type" type="hidden" />
+        <input asp-for="Price" type="hidden" />
+        <input asp-for="Key" type="hidden" />
+        <input asp-for="DeleteKey" type="hidden" />
+        <p>
+            <button type="submit">Confirm</button>
+            <button onclick="history.go(-1);return false;">Cancel</button>
+        </p>
+    </form>
+</fieldset>

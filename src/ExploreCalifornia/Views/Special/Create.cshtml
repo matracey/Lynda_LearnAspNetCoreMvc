@@ -1,5 +1,5 @@
 ﻿@addTagHelper "*, Microsoft.AspNetCore.Mvc.TagHelpers"
-@model ExploreCalifornia.Models.Special
+@model ExploreCalifornia.Models.SpecialViewModel
 
 @{
     Layout = "_Layout";
@@ -27,6 +27,10 @@
             <label asp-for="Price"></label>
             <input asp-for="Price" class="form-control" placeholder="Special price" />
             <span asp-validation-for="Price"></span>
+        </p>
+        <p>
+            <label for="image-upload">Image</label>
+            <input type="file" name="Image" id="image-upload" />
         </p>
         <p>
             <button type="submit">Create Special</button>

@@ -16,6 +16,17 @@ namespace ExploreCalifornia.Models
             Database.EnsureCreated();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Special>()
+                .HasIndex(s => s.Name)
+                .IsUnique();
+
+            modelBuilder.Entity<Special>()
+                .HasIndex(s => s.Key)
+                .IsUnique();
+        }
+
         public IEnumerable<Special> GetMonthlySpecials()
         {
             return Specials.OrderByDescending(x => x.Created).Where(x => x.Created.Month == DateTime.Now.Month).ToArray();

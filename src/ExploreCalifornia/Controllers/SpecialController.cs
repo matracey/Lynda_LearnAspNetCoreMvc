@@ -8,9 +8,6 @@ using ImageSharp;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Abstractions;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Newtonsoft.Json;
 
 namespace ExploreCalifornia.Controllers
 {
@@ -26,6 +23,7 @@ namespace ExploreCalifornia.Controllers
             _env = env;
         }
 
+        #region Create
         [HttpGet, Route("create")]
         public IActionResult Create()
         {
@@ -34,29 +32,44 @@ namespace ExploreCalifornia.Controllers
 
         [HttpPost, Route("create")]
         //public IActionResult Create(Special special, [Bind("image")]ICollection<IFormFile> image)
-        public IActionResult Create(Special special)
+        public async Task<IActionResult> Create(SpecialViewModel special)
         {
-            if(!ModelState.IsValid) return View();
+            if (_db.Specials.Any(x => x.Name == special.Name))
+                ModelState.AddModelError("Name", "Special Name must be a unique value.");
+            if (!ModelState.IsValid) return View();
 
             special.Created = DateTime.Now;
 
-            _db.Specials.Add(special);
-            _db.SaveChanges();
+            _db.Specials.Add(special.ToSpecial());
+
+            SaveImage(special.Image, special.ToSpecial().Key);
+
+            await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
         }
+        #endregion
 
+        #region Edit
         [HttpGet, Route("edit/{key}")]
         public IActionResult Edit(string key)
         {
-            var special = _db.Specials.FirstOrDefault(x => x.Key == key);
+            var special = _db.Specials.FirstOrDefault(x => x.Key == key).ToViewModel();
             return View(special);
         }
 
         [HttpPost, Route("edit/{key}")]
-        public IActionResult Edit(Special special)
+        public async Task<IActionResult> Edit(SpecialViewModel special)
         {
-            if (!ModelState.IsValid) return View();
+            var s = _db.Specials.Where(x => x.Id != special.Id);
+            if (s.Any(x => x.Name == special.Name)) ModelState.AddModelError("Name", "Special Name must be a unique value.");
+            if (s.Any(x => x.Key == special.Key)) ModelState.AddModelError("Key", "Special Key must be a unique value.");
+
+            if (!ModelState.IsValid)
+            {
+                special.DeleteKey = _db.Specials.FirstOrDefault(x => x.Id == special.Id).Key;
+                return View(special);
+            }
 
             var original = _db.Specials.FirstOrDefault(x => x.Id == special.Id); // Match on ID as key may have changed.
 
@@ -80,29 +93,26 @@ namespace ExploreCalifornia.Controllers
                 original.Key = special.Key;
             }
 
-            _db.SaveChanges();
+            SaveImage(special.Image, original.Key);
+
+            await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
         }
+        #endregion
 
-        [HttpGet, Route("upload-image/{key}")]
-        public IActionResult UploadImage(string key)
-        {
-            return View();
-        }
-
-        [HttpPost, Route("upload-image/{key}")]
-        public IActionResult UploadImage(ICollection<IFormFile> image, string key)
-        {
-            SaveImage(image, key);
-
-            return RedirectToAction("Index", "Home");
-        }
-
-        [HttpPost, Route("delete/{key}")]
+        #region Delete
+        [HttpGet, Route("delete/{key}")]
         public IActionResult Delete(string key)
         {
             var special = _db.Specials.FirstOrDefault(x => x.Key == key);
+            return View(model: special.ToViewModel());
+        }
+
+        [HttpPost, Route("delete/{key}")]
+        public async Task<IActionResult> Delete(Special s)
+        {
+            var special = _db.Specials.FirstOrDefault(x => x.Key == s.Key);
 
             var uploads = Path.Combine(_env.WebRootPath, "uploads");
             try
@@ -117,10 +127,11 @@ namespace ExploreCalifornia.Controllers
 
             _db.Specials.Remove(special);
 
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return RedirectToAction("Index", "Home");
         }
+        #endregion
 
         private void SaveImage(ICollection<IFormFile> image, string key)
         {
@@ -128,16 +139,16 @@ namespace ExploreCalifornia.Controllers
             if (!Directory.Exists(uploads)) Directory.CreateDirectory(uploads);
 
 
+            if (image == null) return;
             foreach (var formFile in image)
             {
                 if (formFile.Length <= 0) continue;
 
                 var fileName = $"{key}.jpg";
 
-                using(var stream = formFile.OpenReadStream())
+                using (var stream = formFile.OpenReadStream())
                 using (var output = new FileStream(Path.Combine(uploads, fileName), FileMode.Create))
                 {
-                    //await formFile.CopyToAsync(output);
                     var img = new Image(stream);
                     img.SaveAsJpeg(output);
                 }
