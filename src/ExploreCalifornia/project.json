@@ -4,6 +4,7 @@
     "preserveCompilationContext": true
   },
   "dependencies": {
+    "ImageSharp": "1.0.0-alpha-000236",
     "Microsoft.AspNetCore.Diagnostics": "1.1.0",
     "Microsoft.AspNetCore.Mvc": "1.1.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.1.0",

@@ -68,13 +68,6 @@ namespace ExploreCalifornia
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Use(async (context, next) =>
-            {
-                if (context.Request.Path.Value.Contains("invalid"))
-                    throw new Exception("Error!");
-                await next();
-            });
-
             app.UseMvc(routes =>
             {
                 routes.MapRoute("Default", "{controller=Home}/{action=Index}/{id?}");

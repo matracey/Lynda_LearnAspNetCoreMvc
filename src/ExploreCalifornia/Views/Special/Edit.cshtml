@@ -28,14 +28,19 @@
             <input asp-for="Price" class="form-control" placeholder="Special price" />
             <span asp-validation-for="Price"></span>
         </p>
-
+        <p>
+            <label for="image-upload">Image</label>
+            <a asp-action="UploadImage" asp-controller="Special">Upload Image</a>
+        </p>
         <p>
             <label asp-for="Key"></label>
             <input asp-for="Key" class="form-control" placeholder="Key" />
             <span asp-validation-for="Key"></span>
         </p>
+        <input asp-for="Id" type="hidden" />
         <p>
             <button type="submit">Update Special</button>
+            <button asp-action="Delete" asp-controller="Special" asp-route-key="@Model.Key">Delete Special</button>
         </p>
     </form>
 </fieldset>

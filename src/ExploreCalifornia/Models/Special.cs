@@ -9,12 +9,13 @@ namespace ExploreCalifornia.Models
 {
     public class Special
     {
+        [Key]
         public long Id { get; set; }
 
         private string _key;
 
         [StringLength(100, MinimumLength = 5, ErrorMessage = "Key must be between 5 and 100 characters.")]
-        [RegularExpression("[-a-z0-9]", ErrorMessage = "Key must only contain lowercase or hyphen characters")]
+        [RegularExpression("^[-a-z0-9]+$", ErrorMessage = "Key must only contain lowercase or hyphen characters")]
         public string Key
         {
             get { return string.IsNullOrWhiteSpace(_key) ? (_key = Regex.Replace((Name ?? string.Empty).ToLower(), "[^a-z0-9]", "-")) : _key; }
@@ -22,13 +23,16 @@ namespace ExploreCalifornia.Models
         }
 
         [Required, StringLength(100, MinimumLength = 5, ErrorMessage = "Name must be between 5 and 100 characters.")]
-        public string Name { get; internal set; }
+        [DataType(DataType.Text)]
+        public string Name { get; set; }
 
         [Required, StringLength(100, MinimumLength = 5, ErrorMessage = "Type must be between 5 and 100 characters.")]
-        public string Type { get; internal set; }
+        [DataType(DataType.Text)]
+        public string Type { get; set; }
 
         [Required]
-        public int Price { get; internal set; }
+        [DataType(DataType.Currency)]
+        public int Price { get; set; }
 
         public DateTime Created { get; set; }
     }
