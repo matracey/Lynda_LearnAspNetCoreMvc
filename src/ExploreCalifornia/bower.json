@@ -1,7 +1,8 @@
 {
-	"name": "explore-california",
-	"private": true,
+  "name": "explore-california",
+  "private": true,
   "dependencies": {
-    "tinymce": ""
+    "tinymce": "",
+    "jquery": "2.2.3"
   }
 }

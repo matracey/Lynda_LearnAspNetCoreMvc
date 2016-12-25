@@ -10,15 +10,32 @@ namespace ExploreCalifornia.Controllers
     {
         private readonly BlogDataContext _db;
 
+        private const int PageSize = 2;
+
         public BlogController(BlogDataContext db)
         {
             _db = db;
         }
 
         [Route("")]
-        public IActionResult Index()
+        public IActionResult Index(int page = 0)
         {
-            var posts = _db.Posts.OrderByDescending(x => x.Posted).Take(5).ToArray();
+            var totalPosts = _db.Posts.Count();
+            var totalPages = totalPosts / PageSize;
+            var previousPage = page - 1;
+            var nextPage = page + 1;
+
+            ViewBag.PreviousPage = previousPage;
+            ViewBag.HasPreviousPage = previousPage >= 0;
+            ViewBag.NextPage = nextPage;
+            ViewBag.HasNextPage = nextPage < totalPages;
+
+            var posts = _db.Posts.OrderByDescending(x => x.Posted).Skip(PageSize * page).Take(PageSize).ToArray();
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView(posts);
+            }
 
             return View(posts);
         }
