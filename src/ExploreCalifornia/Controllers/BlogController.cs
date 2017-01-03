@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ExploreCalifornia.Controllers
 {
@@ -48,12 +49,14 @@ namespace ExploreCalifornia.Controllers
             return View(post);
         }
 
+        [Authorize]
         [HttpGet, Route("create")]
         public IActionResult Create()
         {
             return View();
         }
 
+        [Authorize]
         [HttpPost, Route("create")]
         //public IActionResult Create([Bind("Title", "Body")]Post post)
         public IActionResult Create(Post post)

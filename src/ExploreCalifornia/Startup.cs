@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using ExploreCalifornia.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ExploreCalifornia
 {
@@ -49,6 +50,35 @@ namespace ExploreCalifornia
                 options.UseSqlServer(connectionString);
             });
 
+            services.AddDbContext<IdentityDataContext>(options =>
+            {
+                var connectionString = configuration.GetConnectionString("IdentityDataContext");
+                options.UseSqlServer(connectionString);
+            });
+
+            services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddEntityFrameworkStores<IdentityDataContext>();
+
+            services.Configure<IdentityOptions>(options =>
+            {
+                options.Password.RequiredLength = 6;
+                options.Password.RequireUppercase = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = false;
+
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(10);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+
+                options.Cookies.ApplicationCookie.ExpireTimeSpan = TimeSpan.FromHours(12);
+                options.Cookies.ApplicationCookie.LoginPath = "/Account/Login";
+                options.Cookies.ApplicationCookie.LoginPath = "/Account/Logout";
+
+                options.User.RequireUniqueEmail = true;
+                
+            });
+
             services.AddMvc();
         }
 
@@ -67,6 +97,8 @@ namespace ExploreCalifornia
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseIdentity();
 
             app.UseMvc(routes =>
             {
